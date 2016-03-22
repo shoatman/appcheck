@@ -16,23 +16,23 @@ CLI Utilitiy for working with AAD Application Objects.  Use this command line pr
 * An azure active directory instance
 
 ## Usage
-appcheck --help
+* appcheck --help
 
-appcheck login
-appcheck logout
-appcheck dump (writes token if logged in)
-appcheck authZUris -a [app/clientid] -r [redirectUri]
-appcheck healthcheck -a [app/clientid]
-appcheck export -a [app/clientid]
+* appcheck login
+* appcheck logout
+* appcheck dump (writes token if logged in)
+* appcheck authZUris -a [app/clientid] -r [redirectUri]
+* appcheck healthcheck -a [app/clientid]
+* appcheck export -a [app/clientid]
 
 ## Next up
-appcheck owners
-appcheck owners add -u [userid]
-appcheck owners remove -u [userid]
+* appcheck owners
+* appcheck owners add -u [userid]
+* appcheck owners remove -u [userid]
 
-appcheck passwordCredentials
-appcheck passwordCredentials add -p [password] -m [memo]
-appcheck passwordCrednetials remove -o [objectId]
+* appcheck passwordCredentials
+* appcheck passwordCredentials add -p [password] -m [memo]
+* appcheck passwordCrednetials remove -o [objectId]
 
 etc....
 
