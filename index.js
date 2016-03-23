@@ -183,6 +183,46 @@ program
 
   });
 
+function GetSPOAuth2PermissionGrants(graph, token, spObjectId, adminConsent){
+
+  var params = {};
+
+  params.tenantId = token.tenantId;
+  params.spObjectId = spObjectId;
+  params.Authorization = 'Bearer ' + token.accessToken;
+  params.apiVersion = "1.6";
+  
+  return graph.GetServicePrincipalOAuth2PermissionGrants(params);
+}
+
+function GetUserOAuth2PermissionGrants(graph, token){
+  var params = {};
+
+  params.tenantId = token.tenantId;
+  params.userId = token.userId;
+  params.Authorization = 'Bearer ' + token.accessToken;
+  params.apiVersion = "1.6";
+  
+  return graph.GetUserOAuth2PermissionGrants(params);
+}
+
+function filterIsApp(spObjectId){
+  return function(value){
+    return value.clientId == spObjectId;
+  }
+}
+
+
+function filterIsUser(userObjectId){
+  return function(value){
+    return value.principalId == userObjectId;
+  }
+}
+
+function filterIsAdminConsented(value){
+  return value.consentType == "AllPrincipals";
+}
+
 program
   .command('healthcheck')
   .description('Get an overview of the app and your consent information relative to the app.')
@@ -205,25 +245,77 @@ program
           return;
         }
         var appObject = result.body.value[0];
+        console.log(cliff.inspect(appObject));
 
         var userParams = {};
         userParams.userId = token.userId;
         userParams.tenantId = token.tenantId;
         userParams.Authorization = 'Bearer ' + token.accessToken;
         userParams.apiVersion = '1.6';
+
         graph.GetUser(userParams).then(function(result){
-          var userObject = result.value;
+          var userObject = result.body;
+          console.log('We found you.'.green)
+          console.log(cliff.inspect(userObject));
+          
           if(appObject.publicClient){
-            console.log('We found you. You app is a public client... so nothing else to check.'.green);
+            console.log('You app is a public client... so nothing else to check.'.green);
             console.log('Healthcheck complete.');
             return;
           }else{
-            console.log('We found you.  Your app is a confidential client... hence we will look up your service principal next.'.green);
-          }
+            console.log('Your app is a confidential client... hence we will look up your service principal next.'.green);
 
-          spParams = {};
-          spParams.Authorization = 'Bearer ' + token.accessToken;
-          spParams.apiVersion = '1.6';
+            var spParams = {};
+            spParams.Authorization = 'Bearer ' + token.accessToken;
+            spParams.tenantId = token.tenantId;
+            spParams.apiVersion = '1.6';
+            spParams['$filter'] = "appId eq '" + options.appId + "'";
+
+            graph.GetServicePrincipals(spParams).then(function(result){
+              if(result.body.value.length == 0){
+                console.log('Service principal not found'.red);
+                return;
+              }
+
+              var spObject = result.body.value[0];
+              console.log(cliff.inspect(spObject));
+
+              GetSPOAuth2PermissionGrants(graph, token, spObject.objectId, true).then(function(result){
+                var grants = result.body.value;
+                console.log('Here are the oAuth2PermissionGrants currently granted to your app:'.green);
+                console.log(cliff.inspect(grants));
+
+                //This doesn't work right now due to known issues... but we can filter the above list.
+                /*
+
+                GetUserOAuth2PermissionGrants(graph, token).then(function(result){
+                  var grants = result.body.value;
+                  //grants = grants.filter(filterIsApp(spObject.objectId));
+                  console.log('Here are the oAuth2Permissions you granted this app'.green);
+                  console.log(cliff.inspect(grants));
+                }).catch(function(err){
+                  console.log(err);
+                });
+*/
+
+                var userGrants = grants.filter(filterIsUser(userObject.objectId));
+                console.log('Here are the oAuth2Permissions you granted this app'.green);
+                console.log(cliff.inspect(userGrants));
+
+                var adminGrants = grants.filter(filterIsAdminConsented);
+                console.log('Here are the oAuth2Permissions you or another admin consented to onbehalf of all users'.green);
+                console.log(cliff.inspect(adminGrants));
+
+
+              }).catch(function(err){
+                console.log(err);
+              })
+
+            }).catch(function(err){
+              console.log(err);
+            });
+
+          }
 
         }).catch(function(err){
           console.log(err);
