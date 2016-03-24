@@ -5,6 +5,7 @@
  */
 
 var Q = require('q');
+var jws = require('jws');
 var request = require('request');
 var prompt = require('prompt');
 var Url = require('url');
@@ -54,6 +55,7 @@ function createLoginUrl(){
 
   return deferred.promise;
 }
+
 
 function getToken(){
 
@@ -125,6 +127,85 @@ program
       });
       
     });
+  });
+
+program
+  .version('0.0.1')
+  .command('loginDumpToken')
+  .description('Login to your app and dump the resulting token to the console')
+  .option('-a, --appId <appId>', 'Your application or client Id')
+  .option('-r, --redirectUri <redirectUri>', 'The redirect URI registered with you app')
+  .option('-s, --secret [secret]', 'The secret for your web app or if you prefer confidential client')
+  .option('-R, --resource [resource]', 'The resource id or ids that your web application would like to access')
+  .action(function (options){
+    
+      var urlBase = authorityUrl + 
+                      '/oauth2/authorize?response_type=code&client_id=<clientId>' +
+                      '&redirect_uri=<redirectUri>' + 
+                      '&resource=<resource>'
+
+      urlBase = urlBase.replace('<clientId>', options.appId);
+      urlBase = urlBase.replace('<redirectUri>', options.redirectUri);
+
+      if(options.resource){
+        resource = options.resource;
+      }
+
+      var secret = '';
+      if(options.secret){
+        secret = options.secret;
+      }
+
+      urlBase = urlBase.replace('<resource>', resource);
+
+      console.log('Please paste following URL into your browser:'.green);
+      console.log('============================================'.yellow);
+      console.log(urlBase);
+      console.log('============================================'.yellow);
+      console.log('If necessary login and consent to the appcheck application.  When you get a 404... Not Found....'.green);
+      console.log('Copy the resulting URL from your browser and paste below'.green);
+      console.log('Note: The browser will redirect if there is something to redirect to... so stop your web server.'.green);
+      console.log('============================================'.yellow);
+      prompt.start();
+      prompt.get(['url'], function(err, result){
+        var authorizationCodeUrl = result.url;
+
+        var authUrl = Url.parse(authorizationCodeUrl, true);
+   
+        var authenticationContext = new AuthenticationContext(authorityUrl);
+
+        authenticationContext.acquireTokenWithAuthorizationCode(
+          authUrl.query.code,
+          options.redirectUri,
+          resource,
+          options.appId, 
+          secret,
+          function(err, response) {
+            var errorMessage = '';
+            if (err) {
+              errorMessage = 'error: ' + err.message + '\n';
+              console.log(errorMessage);
+              return;
+            }
+            
+            opts = {};
+            var decoded = jws.decode(response.accessToken, opts);
+
+            if(!decoded){
+              console.log('Error decoding your access token.'.red);
+              return;
+            }
+
+            console.log('Here is the content of your access token'.green);
+            console.log(cliff.inspect(decoded.payload));
+
+            
+          }
+        );
+
+      });
+      
+    
   });
 
 program
@@ -206,6 +287,39 @@ function GetUserOAuth2PermissionGrants(graph, token){
   return graph.GetUserOAuth2PermissionGrants(params);
 }
 
+function GetApplication(graph, token, appId){
+
+  var params = {};
+  params.tenantId = token.tenantId;
+  params.Authorization = 'Bearer ' + token.accessToken;
+  
+  params['$filter'] = "appId eq '" + appId+ "'";
+  params['apiVersion'] = "1.6";
+
+  return graph.GetApplications(params);
+}
+
+function GetServicePrincipal(graph, token, appId){
+  var params = {};
+  params.Authorization = 'Bearer ' + token.accessToken;
+  params.tenantId = token.tenantId;
+  params.apiVersion = '1.6';
+  params['$filter'] = "appId eq '" + appId + "'";
+
+  return graph.GetServicePrincipals(params);
+}
+
+
+function GetUser(graph, token){
+  var params = {};
+  params.userId = token.userId;
+  params.tenantId = token.tenantId;
+  params.Authorization = 'Bearer ' + token.accessToken;
+  params.apiVersion = '1.6';
+
+  return graph.GetUser(params);
+}
+
 function filterIsApp(spObjectId){
   return function(value){
     return value.clientId == spObjectId;
@@ -231,104 +345,71 @@ program
     getToken().then(function(token){
       var graph = new aadGraph.AADGraph({'domain': domain });
 
-      var params = {};
-      params.tenantId = token.tenantId;
-      params.Authorization = 'Bearer ' + token.accessToken;
-      
-      params['$filter'] = "appId eq '" + options.appId + "'";
-      params['apiVersion'] = "1.6";
+      var appObject = null;
+      var spObject = null;
+      var userObject = null;
+      var grants = null;
 
-      graph.GetApplications(params).then(function(result){
-        console.log('We found your app.  Next we will look for you'.green);
-        if(result.body.value.length == 0){
-          console.log('App not found'.red);
-          return;
-        }
-        var appObject = result.body.value[0];
-        console.log(cliff.inspect(appObject));
+      var getObjectCalls = [GetApplication(graph, token, options.appId), 
+                            GetUser(graph, token), 
+                            GetServicePrincipal(graph, token, options.appId)];
 
-        var userParams = {};
-        userParams.userId = token.userId;
-        userParams.tenantId = token.tenantId;
-        userParams.Authorization = 'Bearer ' + token.accessToken;
-        userParams.apiVersion = '1.6';
-
-        graph.GetUser(userParams).then(function(result){
-          var userObject = result.body;
-          console.log('We found you.'.green)
-          console.log(cliff.inspect(userObject));
-          
-          if(appObject.publicClient){
-            console.log('You app is a public client... so nothing else to check.'.green);
-            console.log('Healthcheck complete.');
-            return;
+      Q.allSettled(getObjectCalls).spread(function(application, user, servicePrincipal){
+        
+        //App Object
+        if(application.state === "fulfilled"){
+          if(application.value.body.value.length == 0){
+            console.log('Application object not found'.yellow);
           }else{
-            console.log('Your app is a confidential client... hence we will look up your service principal next.'.green);
+            appObject = application.value.body.value[0];
+            console.log('Here is the application object'.green);
+            console.log(cliff.inspect(appObject));
+          }
+        }
 
-            var spParams = {};
-            spParams.Authorization = 'Bearer ' + token.accessToken;
-            spParams.tenantId = token.tenantId;
-            spParams.apiVersion = '1.6';
-            spParams['$filter'] = "appId eq '" + options.appId + "'";
+        //User Object
+        if(user.state === "fulfilled"){
+          userObject = user.value.body;
+          console.log('We found you as well.'.green);
+        }
 
-            graph.GetServicePrincipals(spParams).then(function(result){
-              if(result.body.value.length == 0){
-                console.log('Service principal not found'.red);
-                return;
-              }
-
-              var spObject = result.body.value[0];
-              console.log(cliff.inspect(spObject));
-
-              GetSPOAuth2PermissionGrants(graph, token, spObject.objectId, true).then(function(result){
-                var grants = result.body.value;
-                console.log('Here are the oAuth2PermissionGrants currently granted to your app:'.green);
-                console.log(cliff.inspect(grants));
-
-                //This doesn't work right now due to known issues... but we can filter the above list.
-                /*
-
-                GetUserOAuth2PermissionGrants(graph, token).then(function(result){
-                  var grants = result.body.value;
-                  //grants = grants.filter(filterIsApp(spObject.objectId));
-                  console.log('Here are the oAuth2Permissions you granted this app'.green);
-                  console.log(cliff.inspect(grants));
-                }).catch(function(err){
-                  console.log(err);
-                });
-*/
-
-                var userGrants = grants.filter(filterIsUser(userObject.objectId));
-                console.log('Here are the oAuth2Permissions you granted this app'.green);
-                console.log(cliff.inspect(userGrants));
-
-                var adminGrants = grants.filter(filterIsAdminConsented);
-                console.log('Here are the oAuth2Permissions you or another admin consented to onbehalf of all users'.green);
-                console.log(cliff.inspect(adminGrants));
-
-
-              }).catch(function(err){
-                console.log(err);
-              })
-
-            }).catch(function(err){
-              console.log(err);
-            });
+        //Service Principal
+        if(servicePrincipal.state === "fulfilled"){
+          if(servicePrincipal.value.body.value.length == 0){
+            console.log('Service principal not found'.yellow);
+          }else{
+            spObject = servicePrincipal.value.body.value[0];
+            console.log('Here is the service princpal object'.green);
+            console.log(cliff.inspect(appObject));
 
           }
+        }
 
-        }).catch(function(err){
-          console.log(err);
-          console.log('We were not able to find you in the directory'.red);
-          return;
-        });
+      }).then(function(){
+                if(spObject){
+          GetSPOAuth2PermissionGrants(graph, token, spObject.objectId, true).then(function(result){
+            grants = result.body.value;
+            console.log('Here are the oAuth2PermissionGrants currently granted to your app:'.green);
+            console.log(cliff.inspect(grants));
 
-      }).catch(function(err){
-        console.log(err);
-        console.log('We were not able to find that app that you were looking for'.red);
-        return;
-      });      
+            var userGrants = grants.filter(filterIsUser(userObject.objectId));
+            console.log('Here are the oAuth2Permissions you granted this app'.green);
+            console.log(cliff.inspect(userGrants));
+
+            var adminGrants = grants.filter(filterIsAdminConsented);
+            console.log('Here are the oAuth2Permissions you or another admin consented to onbehalf of all users'.green);
+            console.log(cliff.inspect(adminGrants));
+
+
+          }).catch(function(err){
+            console.log(err);
+          });
+
+        }
+      });
+
     }).catch(function(err){
+      console.log(err);
       console.log('This command requires you to login.  Usage: aadappcheck login'.red);
       return;
     });
