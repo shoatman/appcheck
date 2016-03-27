@@ -40,6 +40,10 @@ var templateAuthzUrlWOState = authorityUrl +
                         '&resource=' +
                         resource;
 
+//The actual global administrator role name....
+var companyAdministratorDisplayName = 'Company Administrator';
+
+
 function createLoginUrl(){
 
   var deferred = Q.defer();
@@ -320,6 +324,17 @@ function GetUser(graph, token){
   return graph.GetUser(params);
 }
 
+function GetDirectoryRoles(graph, token){
+  var params = {};
+  params.tenantId = token.tenantId;
+  params.Authorization = 'Bearer ' + token.accessToken;
+  params.apiVersion = '1.6';
+  // I want to do this... but no... this filter isn't supported
+  //params['$filter'] = "displayName eq 'Company Administrator'";
+
+  return graph.GetDirectoryRoles(params);
+}
+
 function filterIsApp(spObjectId){
   return function(value){
     return value.clientId == spObjectId;
@@ -348,13 +363,17 @@ program
       var appObject = null;
       var spObject = null;
       var userObject = null;
+      var directoryRoles = null;
       var grants = null;
+
+      var resourceApps = null;
 
       var getObjectCalls = [GetApplication(graph, token, options.appId), 
                             GetUser(graph, token), 
-                            GetServicePrincipal(graph, token, options.appId)];
+                            GetServicePrincipal(graph, token, options.appId),
+                            GetDirectoryRoles(graph, token)];
 
-      Q.allSettled(getObjectCalls).spread(function(application, user, servicePrincipal){
+      Q.allSettled(getObjectCalls).spread(function(application, user, servicePrincipal, dirRoles){
         
         //App Object
         if(application.state === "fulfilled"){
@@ -362,6 +381,7 @@ program
             console.log('Application object not found'.yellow);
           }else{
             appObject = application.value.body.value[0];
+         
             console.log('Here is the application object'.green);
             console.log(cliff.inspect(appObject));
           }
@@ -378,19 +398,58 @@ program
           if(servicePrincipal.value.body.value.length == 0){
             console.log('Service principal not found'.yellow);
           }else{
+
             spObject = servicePrincipal.value.body.value[0];
+            
             console.log('Here is the service princpal object'.green);
-            console.log(cliff.inspect(appObject));
+            console.log(cliff.inspect(spObject));
 
           }
         }
 
+        if(dirRoles.state === "fulfilled"){
+          //These shoudl always be found... add error handling later if it looks like it's ncessary
+          directoryRoles = dirRoles.value.body.value;
+        }
+
+
       }).then(function(){
-                if(spObject){
-          GetSPOAuth2PermissionGrants(graph, token, spObject.objectId, true).then(function(result){
-            grants = result.body.value;
-            console.log('Here are the oAuth2PermissionGrants currently granted to your app:'.green);
-            console.log(cliff.inspect(grants));
+
+        //Additional Requests based on availability/state of the app/sp
+        var additionalRequests = [];
+
+        if(spObject){
+          additionalRequests.push(GetSPOAuth2PermissionGrants(graph, token, spObject.objectId, true));
+        }
+
+        if(directoryRoles){
+          //Let's see if the currnet user is an administrator...
+          
+        }
+
+        if(appObject){
+          //let's get the SPs for the app publisappObject.requiredResourceAccesshe required resources (The apps publishing the APIs were going to call)
+          for (var i = 0; i < appObject.requiredResourceAccess.length; i++) {
+            additionalRequests.push(GetServicePrincipal(graph, token, appObject.requiredResourceAccess[i].resourceAppId));
+          };
+        }
+
+        //***** SHOULD ADD A DIRECTORY ROLE CHECK FOR THE CURRENT USER
+
+        Q.allSettled(additionalRequests).spread(function(){
+
+
+          var arg1 = arguments[0];
+          if(arg1.state === "fulfilled"){
+            grants = arg1.value.body.value;
+          }
+
+
+
+        }).then(function(){
+
+          if(grants){
+
 
             var userGrants = grants.filter(filterIsUser(userObject.objectId));
             console.log('Here are the oAuth2Permissions you granted this app'.green);
@@ -399,13 +458,13 @@ program
             var adminGrants = grants.filter(filterIsAdminConsented);
             console.log('Here are the oAuth2Permissions you or another admin consented to onbehalf of all users'.green);
             console.log(cliff.inspect(adminGrants));
+          }
 
+        });
+        
 
-          }).catch(function(err){
-            console.log(err);
-          });
+        
 
-        }
       });
 
     }).catch(function(err){
