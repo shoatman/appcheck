@@ -244,10 +244,11 @@ program
 program
   .command('export')
   .description('exports an application to json')
-  .option('-a, --appId <appId>', 'Your application or client Id')
+  .option('-a, --appId [appId]', 'Your application or client Id')
+  .option('-n, --appName [appName]', 'You application name')
   .action(function(options){
     getToken().then(function(token){
-      var graph = new aadGraph.AADGraph({'domain': domain });
+      var graph = new aadGraph.graph({'domain': domain });
 
       var params = {};
       params.tenantId = token.tenantId;
@@ -335,6 +336,17 @@ function GetDirectoryRoles(graph, token){
   return graph.GetDirectoryRoles(params);
 }
 
+function GetUserMembership(graph, token, directoryRoleOrGroupId){
+  var params = {};
+  params.tenantId = token.tenantId;
+  params.userId = token.userId;
+  params.Authorization = 'Bearer ' + token.accessToken;
+  params.apiVersion = "1.6";
+  params['$filter'] = "objectId eq '" + directoryRoleOrGroupId + "'";
+
+  return graph.GetUserMemberships(params);
+}
+
 function filterIsApp(spObjectId){
   return function(value){
     return value.clientId == spObjectId;
@@ -352,21 +364,27 @@ function filterIsAdminConsented(value){
   return value.consentType == "AllPrincipals";
 }
 
+function filterIsGlobalAdmin(value){
+  return value.displayName === "Company Administrator";
+}
+
 program
   .command('healthcheck')
   .description('Get an overview of the app and your consent information relative to the app.')
   .option('-a, --appId <appId>', 'Your application or client Id')
   .action(function(options){
     getToken().then(function(token){
-      var graph = new aadGraph.AADGraph({'domain': domain });
+      var graph = new aadGraph.graph({'domain': domain });
 
       var appObject = null;
       var spObject = null;
       var userObject = null;
       var directoryRoles = null;
       var grants = null;
+      var adminObjectId = null;
+      var userIsAdmin = false;
 
-      var resourceApps = null;
+      var resourceApps = [];
 
       var getObjectCalls = [GetApplication(graph, token, options.appId), 
                             GetUser(graph, token), 
@@ -410,6 +428,8 @@ program
         if(dirRoles.state === "fulfilled"){
           //These shoudl always be found... add error handling later if it looks like it's ncessary
           directoryRoles = dirRoles.value.body.value;
+        }else{
+          console.log(directoryRoles.reason);
         }
 
 
@@ -418,17 +438,19 @@ program
         //Additional Requests based on availability/state of the app/sp
         var additionalRequests = [];
 
+        if(directoryRoles){
+          //Let's see if the currnet user is an administrator...
+          var adminRole = directoryRoles.filter(filterIsGlobalAdmin);
+          adminObjectId = adminRole[0].objectId;
+          additionalRequests.push(GetUserMembership(graph, token, adminObjectId));
+        }
+
         if(spObject){
           additionalRequests.push(GetSPOAuth2PermissionGrants(graph, token, spObject.objectId, true));
         }
-
-        if(directoryRoles){
-          //Let's see if the currnet user is an administrator...
-          
-        }
-
+        
         if(appObject){
-          //let's get the SPs for the app publisappObject.requiredResourceAccesshe required resources (The apps publishing the APIs were going to call)
+          //let's get the SPs for the app publishing required resources (The apps publishing the APIs were going to call)
           for (var i = 0; i < appObject.requiredResourceAccess.length; i++) {
             additionalRequests.push(GetServicePrincipal(graph, token, appObject.requiredResourceAccess[i].resourceAppId));
           };
@@ -438,11 +460,41 @@ program
 
         Q.allSettled(additionalRequests).spread(function(){
 
+          var resourceAppIndex = 1;
 
-          var arg1 = arguments[0];
-          if(arg1.state === "fulfilled"){
-            grants = arg1.value.body.value;
+          var arg2 = arguments[0];
+          if(arg2.state === "fulfilled"){
+            if(arg2.value.body.value.length === 1){
+              userIsAdmin = true;
+            }else{
+              userIsAdmin = false;
+            }
+          }else{
+            console.log(arg2.reason);
           }
+
+
+          if(spObject){
+            var arg1 = arguments[1];
+            if(arg1.state === "fulfilled"){
+              grants = arg1.value.body.value;
+            }
+            resourceAppIndex = 2;
+          }
+
+          
+
+          if(userIsAdmin){
+            console.log('You are an admin'.green);
+          }else{
+            console.log('Nope, you are not an admin');
+          }
+
+          for (var i = 2; i < arguments.length; i++) {
+            var rApp = arguments[i].value.body.value[0];
+            console.log(rApp.displayName);
+            resourceApps.push(rApp);
+          };
 
 
 

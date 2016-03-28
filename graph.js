@@ -1,18 +1,18 @@
 /*jshint -W069 */
 /**
  * Identity and access management services
- * @class AADGraph
+ * @class graph
  * @param {(string|object)} [domainOrOptions] - The project domain or options object. If object, see the object's optional properties.
  * @param {string} [domainOrOptions.domain] - The project domain
  * @param {object} [domainOrOptions.token] - auth token - object with value property and optional headerOrQueryName and isQuery properties
  */
-var AADGraph = (function() {
+var graph = (function() {
     'use strict';
 
     var request = require('request');
     var Q = require('q');
 
-    function AADGraph(options) {
+    function graph(options) {
         var domain = (typeof options === 'object') ? options.domain : options;
         this.domain = domain ? domain : '';
         if (this.domain.length === 0) {
@@ -23,7 +23,7 @@ var AADGraph = (function() {
     /**
      * Retrieves a list of users in Azure Active Directory based on provided oData query paramters including: $filter, $orderby, $top
      * @method
-     * @name AADGraph#GetUsers
+     * @name graph#GetUsers
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -33,7 +33,7 @@ var AADGraph = (function() {
      * @param {string} $orderby - The oData v3.0 orderby statement.  Controls the order in which the results are returned.
      * 
      */
-    AADGraph.prototype.GetUsers = function(parameters) {
+    graph.prototype.GetUsers = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -138,14 +138,14 @@ var AADGraph = (function() {
     /**
      * Creates a new user in Azure Active Directory.
      * @method
-     * @name AADGraph#CreateUser
+     * @name graph#CreateUser
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {} user - New user
      * 
      */
-    AADGraph.prototype.CreateUser = function(parameters) {
+    graph.prototype.CreateUser = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -243,14 +243,14 @@ var AADGraph = (function() {
     /**
      * Retreives a specific user (user object) from Azure Active Directory by objectId or UPN.
      * @method
-     * @name AADGraph#GetUser
+     * @name graph#GetUser
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.GetUser = function(parameters) {
+    graph.prototype.GetUser = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -346,7 +346,7 @@ var AADGraph = (function() {
     /**
      * Updates a user (user object) identified by objectId or UPN in Azure Active Directory
      * @method
-     * @name AADGraph#UpdateUser
+     * @name graph#UpdateUser
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -354,7 +354,7 @@ var AADGraph = (function() {
      * @param {} user - user with updated fields
      * 
      */
-    AADGraph.prototype.UpdateUser = function(parameters) {
+    graph.prototype.UpdateUser = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -459,14 +459,14 @@ var AADGraph = (function() {
     /**
      * Deletes a user (user object) identified by objectId or UPN in Azure Active Directory
      * @method
-     * @name AADGraph#DeleteUser
+     * @name graph#DeleteUser
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.DeleteUser = function(parameters) {
+    graph.prototype.DeleteUser = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -562,14 +562,14 @@ var AADGraph = (function() {
     /**
      * Retrieves the manager of a user from Azure Active Directory.  A manager can be a user or contact object.
      * @method
-     * @name AADGraph#GetUserManager
+     * @name graph#GetUserManager
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.GetUserManager = function(parameters) {
+    graph.prototype.GetUserManager = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -665,7 +665,7 @@ var AADGraph = (function() {
     /**
      * Updates the user's manager in Azure Active Directory.  A manager can be a user or contact object.
      * @method
-     * @name AADGraph#UpdateUserManager
+     * @name graph#UpdateUserManager
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -673,7 +673,7 @@ var AADGraph = (function() {
      * @param {} link - a link to a specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.UpdateUserManager = function(parameters) {
+    graph.prototype.UpdateUserManager = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -778,14 +778,14 @@ var AADGraph = (function() {
     /**
      * Deletes the user's manager in Azure Active Directory.  A manager can be a user or contact object.
      * @method
-     * @name AADGraph#DeleteUserManager
+     * @name graph#DeleteUserManager
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.DeleteUserManager = function(parameters) {
+    graph.prototype.DeleteUserManager = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -881,7 +881,7 @@ var AADGraph = (function() {
     /**
      * Get the user's direct reports.  Direct reports are users who have their manager attribute set to the current user.
      * @method
-     * @name AADGraph#GetUserDirectReports
+     * @name graph#GetUserDirectReports
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -889,7 +889,7 @@ var AADGraph = (function() {
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.GetUserDirectReports = function(parameters) {
+    graph.prototype.GetUserDirectReports = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -989,15 +989,16 @@ var AADGraph = (function() {
     /**
      * Get a list of groups and directory roles that the user is a member of.
      * @method
-     * @name AADGraph#GetUserMemberships
+     * @name graph#GetUserMemberships
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} $skiptoken - Skiptoken use to page forward through a large result set..
+     * @param {string} $filter - The oData v3.0 filter statement.  Controls which objects are returned.
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.GetUserMemberships = function(parameters) {
+    graph.prototype.GetUserMemberships = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -1033,6 +1034,10 @@ var AADGraph = (function() {
 
         if (parameters['$skiptoken'] !== undefined) {
             queryParameters['$skiptoken'] = parameters['$skiptoken'];
+        }
+
+        if (parameters['$filter'] !== undefined) {
+            queryParameters['$filter'] = parameters['$filter'];
         }
 
         path = path.replace('{userId}', parameters['userId']);
@@ -1097,7 +1102,7 @@ var AADGraph = (function() {
     /**
      * Get registered devices owned by the user.
      * @method
-     * @name AADGraph#GetUserOwnedDevices
+     * @name graph#GetUserOwnedDevices
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -1105,7 +1110,7 @@ var AADGraph = (function() {
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.GetUserOwnedDevices = function(parameters) {
+    graph.prototype.GetUserOwnedDevices = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -1205,7 +1210,7 @@ var AADGraph = (function() {
     /**
      * Get registered devices registered by the user.
      * @method
-     * @name AADGraph#GetUserRegisteredDevices
+     * @name graph#GetUserRegisteredDevices
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -1213,7 +1218,7 @@ var AADGraph = (function() {
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.GetUserRegisteredDevices = function(parameters) {
+    graph.prototype.GetUserRegisteredDevices = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -1313,7 +1318,7 @@ var AADGraph = (function() {
     /**
      * Get the list of the oAuth2PermissionGrants that the user granted applications.  These permissions are typically granted when an application asked for a specific permission to a resource that the user has discretion over.
      * @method
-     * @name AADGraph#GetUserOAuth2PermissionGrants
+     * @name graph#GetUserOAuth2PermissionGrants
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -1321,7 +1326,7 @@ var AADGraph = (function() {
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.GetUserOAuth2PermissionGrants = function(parameters) {
+    graph.prototype.GetUserOAuth2PermissionGrants = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -1421,7 +1426,7 @@ var AADGraph = (function() {
     /**
      * Get objects created by the user.
      * @method
-     * @name AADGraph#GetUserCreatedObjects
+     * @name graph#GetUserCreatedObjects
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -1429,7 +1434,7 @@ var AADGraph = (function() {
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.GetUserCreatedObjects = function(parameters) {
+    graph.prototype.GetUserCreatedObjects = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -1529,7 +1534,7 @@ var AADGraph = (function() {
     /**
      * Get objects owned by the user.
      * @method
-     * @name AADGraph#GetUserOwnedObjects
+     * @name graph#GetUserOwnedObjects
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -1537,7 +1542,7 @@ var AADGraph = (function() {
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.GetUserOwnedObjects = function(parameters) {
+    graph.prototype.GetUserOwnedObjects = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -1637,7 +1642,7 @@ var AADGraph = (function() {
     /**
      * Get user application role assignments.
      * @method
-     * @name AADGraph#GetUserAppRoleAssignments
+     * @name graph#GetUserAppRoleAssignments
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -1645,7 +1650,7 @@ var AADGraph = (function() {
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.GetUserAppRoleAssignments = function(parameters) {
+    graph.prototype.GetUserAppRoleAssignments = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -1745,7 +1750,7 @@ var AADGraph = (function() {
     /**
      * Assign a user to an application role.  If no roles exist use guid.empty (all 0000)
      * @method
-     * @name AADGraph#CreateUserAppRoleAssignment
+     * @name graph#CreateUserAppRoleAssignment
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -1753,7 +1758,7 @@ var AADGraph = (function() {
      * @param {} appRoleAssignment - New app role assignment
      * 
      */
-    AADGraph.prototype.CreateUserAppRoleAssignment = function(parameters) {
+    graph.prototype.CreateUserAppRoleAssignment = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -1858,7 +1863,7 @@ var AADGraph = (function() {
     /**
      * Delete a user application role assignment.
      * @method
-     * @name AADGraph#DeleteUserAppRoleAssignment
+     * @name graph#DeleteUserAppRoleAssignment
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -1866,7 +1871,7 @@ var AADGraph = (function() {
      * @param {string} objectId - The unique identifier of the object specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.DeleteUserAppRoleAssignment = function(parameters) {
+    graph.prototype.DeleteUserAppRoleAssignment = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -1969,14 +1974,14 @@ var AADGraph = (function() {
     /**
      * Get user extension properties
      * @method
-     * @name AADGraph#GetUserExtensionProperties
+     * @name graph#GetUserExtensionProperties
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} userId - The unique identifier of a user in Azure Active Directory (UPN or ObjectId)
      * 
      */
-    AADGraph.prototype.GetUserExtensionProperties = function(parameters) {
+    graph.prototype.GetUserExtensionProperties = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -2072,7 +2077,7 @@ var AADGraph = (function() {
     /**
      * Add and remove one or more licenses for a Microsoft online service to the list of assigned licenses for the user.
      * @method
-     * @name AADGraph#SetUserLicenses
+     * @name graph#SetUserLicenses
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -2080,7 +2085,7 @@ var AADGraph = (function() {
      * @param {} licensesParam - A list of licenses to be assigned and those to be removed.
      * 
      */
-    AADGraph.prototype.SetUserLicenses = function(parameters) {
+    graph.prototype.SetUserLicenses = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -2185,7 +2190,7 @@ var AADGraph = (function() {
     /**
      * From a list of groups Ids select those that the user is a member of.
      * @method
-     * @name AADGraph#SelectAzureADGroupIdsUserIsMemberOf
+     * @name graph#SelectAzureADGroupIdsUserIsMemberOf
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -2193,7 +2198,7 @@ var AADGraph = (function() {
      * @param {} checkMemberGroupsParam - A list of groups object ids.
      * 
      */
-    AADGraph.prototype.SelectAzureADGroupIdsUserIsMemberOf = function(parameters) {
+    graph.prototype.SelectAzureADGroupIdsUserIsMemberOf = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -2298,14 +2303,14 @@ var AADGraph = (function() {
     /**
      * Retrieves a list of subscribed skus (subscriptions) to Microsoft services.
      * @method
-     * @name AADGraph#GetSubscribedSkus
+     * @name graph#GetSubscribedSkus
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} $skiptoken - Skiptoken use to page forward through a large result set..
      * 
      */
-    AADGraph.prototype.GetSubscribedSkus = function(parameters) {
+    graph.prototype.GetSubscribedSkus = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -2398,14 +2403,14 @@ var AADGraph = (function() {
     /**
      * Retrieves the details of a tenant in Azure Active Directory
      * @method
-     * @name AADGraph#GetTenantDetails
+     * @name graph#GetTenantDetails
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} $skiptoken - Skiptoken use to page forward through a large result set..
      * 
      */
-    AADGraph.prototype.GetTenantDetails = function(parameters) {
+    graph.prototype.GetTenantDetails = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -2498,14 +2503,14 @@ var AADGraph = (function() {
     /**
      * Retrieves the list of trusted certificate authorities for a tenant in Azure Active Directory
      * @method
-     * @name AADGraph#GetTrustedCertificateAuthorities
+     * @name graph#GetTrustedCertificateAuthorities
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} $skiptoken - Skiptoken use to page forward through a large result set..
      * 
      */
-    AADGraph.prototype.GetTrustedCertificateAuthorities = function(parameters) {
+    graph.prototype.GetTrustedCertificateAuthorities = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -2598,14 +2603,14 @@ var AADGraph = (function() {
     /**
      * Creates a new trusted certificate authority in Azure Active Directory.
      * @method
-     * @name AADGraph#CreateAzureADTrustedCertificateAuthority
+     * @name graph#CreateAzureADTrustedCertificateAuthority
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {} certificateAuthority - New trusted certificate authority
      * 
      */
-    AADGraph.prototype.CreateAzureADTrustedCertificateAuthority = function(parameters) {
+    graph.prototype.CreateAzureADTrustedCertificateAuthority = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -2703,14 +2708,14 @@ var AADGraph = (function() {
     /**
      * Retrieves a list of directory role templates in Azure Active Directory
      * @method
-     * @name AADGraph#GetDirectoryRoleTemplates
+     * @name graph#GetDirectoryRoleTemplates
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} $skiptoken - Skiptoken use to page forward through a large result set..
      * 
      */
-    AADGraph.prototype.GetDirectoryRoleTemplates = function(parameters) {
+    graph.prototype.GetDirectoryRoleTemplates = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -2803,14 +2808,14 @@ var AADGraph = (function() {
     /**
      * Retrieves a list of director roles in Azure Active Directory based on provided oData query paramters including: $filter, $orderby, $top
      * @method
-     * @name AADGraph#GetDirectoryRoles
+     * @name graph#GetDirectoryRoles
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} $skiptoken - Skiptoken use to page forward through a large result set..
      * 
      */
-    AADGraph.prototype.GetDirectoryRoles = function(parameters) {
+    graph.prototype.GetDirectoryRoles = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -2903,14 +2908,14 @@ var AADGraph = (function() {
     /**
      * Activates an existing directory role in Azure Active Directory.
      * @method
-     * @name AADGraph#ActivateDirectoryRole
+     * @name graph#ActivateDirectoryRole
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {} directoryRole - Azure active directory role.  Only the roleTemplateId is required.
      * 
      */
-    AADGraph.prototype.ActivateDirectoryRole = function(parameters) {
+    graph.prototype.ActivateDirectoryRole = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -3008,14 +3013,14 @@ var AADGraph = (function() {
     /**
      * Retreives a specific directory role (directory role object) from Azure Active Directory by objectId.
      * @method
-     * @name AADGraph#GetDirectoryRole
+     * @name graph#GetDirectoryRole
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} directoryRoleId - The unique identifier of a directory role in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.GetDirectoryRole = function(parameters) {
+    graph.prototype.GetDirectoryRole = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -3111,7 +3116,7 @@ var AADGraph = (function() {
     /**
      * Get the members of a directory role.
      * @method
-     * @name AADGraph#GetAzureADDirectoryRoleMembers
+     * @name graph#GetAzureADDirectoryRoleMembers
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -3119,7 +3124,7 @@ var AADGraph = (function() {
      * @param {string} directoryRoleId - The unique identifier of a directory role in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.GetAzureADDirectoryRoleMembers = function(parameters) {
+    graph.prototype.GetAzureADDirectoryRoleMembers = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -3219,7 +3224,7 @@ var AADGraph = (function() {
     /**
      * Add a member to a directory role.  (User, Group, Contact)
      * @method
-     * @name AADGraph#AddDirectoryRoleMember
+     * @name graph#AddDirectoryRoleMember
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -3227,7 +3232,7 @@ var AADGraph = (function() {
      * @param {} link - a link to a specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.AddDirectoryRoleMember = function(parameters) {
+    graph.prototype.AddDirectoryRoleMember = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -3332,7 +3337,7 @@ var AADGraph = (function() {
     /**
      * Removes a specific member of a directory role.
      * @method
-     * @name AADGraph#RemoveDirectoryMember
+     * @name graph#RemoveDirectoryMember
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -3340,7 +3345,7 @@ var AADGraph = (function() {
      * @param {string} objectId - The unique identifier of the object specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.RemoveDirectoryMember = function(parameters) {
+    graph.prototype.RemoveDirectoryMember = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -3443,7 +3448,7 @@ var AADGraph = (function() {
     /**
      * Retrieves a list of contacts in Azure Active Directory based on provided oData query paramters including: $filter, $orderby, $top
      * @method
-     * @name AADGraph#GetContacts
+     * @name graph#GetContacts
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -3453,7 +3458,7 @@ var AADGraph = (function() {
      * @param {string} $orderby - The oData v3.0 orderby statement.  Controls the order in which the results are returned.
      * 
      */
-    AADGraph.prototype.GetContacts = function(parameters) {
+    graph.prototype.GetContacts = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -3558,14 +3563,14 @@ var AADGraph = (function() {
     /**
      * Creates a new contact in Azure Active Directory.
      * @method
-     * @name AADGraph#CreateContact
+     * @name graph#CreateContact
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {} contact - New contact
      * 
      */
-    AADGraph.prototype.CreateContact = function(parameters) {
+    graph.prototype.CreateContact = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -3663,14 +3668,14 @@ var AADGraph = (function() {
     /**
      * Retreives a specific contact (contact object) from Azure Active Directory by objectId.
      * @method
-     * @name AADGraph#GetContact
+     * @name graph#GetContact
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} contactId - The unique identifier of a contact in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.GetContact = function(parameters) {
+    graph.prototype.GetContact = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -3766,7 +3771,7 @@ var AADGraph = (function() {
     /**
      * Updates a contact (contact object) identified by objectId
      * @method
-     * @name AADGraph#UpdateContact
+     * @name graph#UpdateContact
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -3774,7 +3779,7 @@ var AADGraph = (function() {
      * @param {} contact - contact with updated fields
      * 
      */
-    AADGraph.prototype.UpdateContact = function(parameters) {
+    graph.prototype.UpdateContact = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -3879,14 +3884,14 @@ var AADGraph = (function() {
     /**
      * Deletes a contact (contact object) identified by objectId
      * @method
-     * @name AADGraph#DeleteContact
+     * @name graph#DeleteContact
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} contactId - The unique identifier of a contact in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.DeleteContact = function(parameters) {
+    graph.prototype.DeleteContact = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -3982,14 +3987,14 @@ var AADGraph = (function() {
     /**
      * Retrieves the manager of a contact from Azure Active Directory.  A manager can be a user or contact object.
      * @method
-     * @name AADGraph#GetContactManager
+     * @name graph#GetContactManager
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} contactId - The unique identifier of a contact in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.GetContactManager = function(parameters) {
+    graph.prototype.GetContactManager = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -4085,7 +4090,7 @@ var AADGraph = (function() {
     /**
      * Updates the contact's manager in Azure Active Directory.  A manager can be a user or contact object.
      * @method
-     * @name AADGraph#UpdateContactManager
+     * @name graph#UpdateContactManager
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -4093,7 +4098,7 @@ var AADGraph = (function() {
      * @param {} link - a link to a specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.UpdateContactManager = function(parameters) {
+    graph.prototype.UpdateContactManager = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -4198,14 +4203,14 @@ var AADGraph = (function() {
     /**
      * Deletes the contact's manager in Azure Active Directory.  A manager can be a user or contact object.
      * @method
-     * @name AADGraph#DeleteContactManager
+     * @name graph#DeleteContactManager
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} contactId - The unique identifier of a contact in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.DeleteContactManager = function(parameters) {
+    graph.prototype.DeleteContactManager = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -4301,7 +4306,7 @@ var AADGraph = (function() {
     /**
      * Get the contact's direct reports.  Direct reports are users who have their manager attribute set to the current contact.
      * @method
-     * @name AADGraph#GetContactDirectReports
+     * @name graph#GetContactDirectReports
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -4309,7 +4314,7 @@ var AADGraph = (function() {
      * @param {string} contactId - The unique identifier of a contact in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.GetContactDirectReports = function(parameters) {
+    graph.prototype.GetContactDirectReports = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -4409,7 +4414,7 @@ var AADGraph = (function() {
     /**
      * Get a list of groups and directory roles that the contact is a member of.
      * @method
-     * @name AADGraph#GetContactMemberships
+     * @name graph#GetContactMemberships
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -4417,7 +4422,7 @@ var AADGraph = (function() {
      * @param {string} contactId - The unique identifier of a contact in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.GetContactMemberships = function(parameters) {
+    graph.prototype.GetContactMemberships = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -4517,7 +4522,7 @@ var AADGraph = (function() {
     /**
      * From a list of groups Ids select those that the contact is a member of.
      * @method
-     * @name AADGraph#SelectAzureADGroupIdsContactIsMemberOf
+     * @name graph#SelectAzureADGroupIdsContactIsMemberOf
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -4525,7 +4530,7 @@ var AADGraph = (function() {
      * @param {} checkMemberGroupsParam - A list of groups object ids.
      * 
      */
-    AADGraph.prototype.SelectAzureADGroupIdsContactIsMemberOf = function(parameters) {
+    graph.prototype.SelectAzureADGroupIdsContactIsMemberOf = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -4630,7 +4635,7 @@ var AADGraph = (function() {
     /**
      * Retrieves a list of devices in Azure Active Directory based on provided oData query paramters including: $filter, $orderby, $top
      * @method
-     * @name AADGraph#GetDevices
+     * @name graph#GetDevices
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -4640,7 +4645,7 @@ var AADGraph = (function() {
      * @param {string} $orderby - The oData v3.0 orderby statement.  Controls the order in which the results are returned.
      * 
      */
-    AADGraph.prototype.GetDevices = function(parameters) {
+    graph.prototype.GetDevices = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -4745,14 +4750,14 @@ var AADGraph = (function() {
     /**
      * Creates a new device in Azure Active Directory.
      * @method
-     * @name AADGraph#CreateDevice
+     * @name graph#CreateDevice
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {} device - New device
      * 
      */
-    AADGraph.prototype.CreateDevice = function(parameters) {
+    graph.prototype.CreateDevice = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -4850,14 +4855,14 @@ var AADGraph = (function() {
     /**
      * Retreives a specific device (device object) from Azure Active Directory by objectId.
      * @method
-     * @name AADGraph#GetDevice
+     * @name graph#GetDevice
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} deviceId - The unique identifier of a device in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.GetDevice = function(parameters) {
+    graph.prototype.GetDevice = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -4953,7 +4958,7 @@ var AADGraph = (function() {
     /**
      * Updates a device (device object) identified by objectId
      * @method
-     * @name AADGraph#UpdateDevice
+     * @name graph#UpdateDevice
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -4961,7 +4966,7 @@ var AADGraph = (function() {
      * @param {} device - device with updated fields
      * 
      */
-    AADGraph.prototype.UpdateDevice = function(parameters) {
+    graph.prototype.UpdateDevice = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -5066,14 +5071,14 @@ var AADGraph = (function() {
     /**
      * Deletes a device (device object) identified by objectId
      * @method
-     * @name AADGraph#DeleteDevice
+     * @name graph#DeleteDevice
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} deviceId - The unique identifier of a device in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.DeleteDevice = function(parameters) {
+    graph.prototype.DeleteDevice = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -5169,14 +5174,14 @@ var AADGraph = (function() {
     /**
      * Get the list of oAuth2PermissionGrants granted by users within the directory.  These permissions are typically granted when an application asked for a specific permission to a resource that the user has discretion over.
      * @method
-     * @name AADGraph#GetOAuth2PermissionGrants
+     * @name graph#GetOAuth2PermissionGrants
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} $skiptoken - Skiptoken use to page forward through a large result set..
      * 
      */
-    AADGraph.prototype.GetOAuth2PermissionGrants = function(parameters) {
+    graph.prototype.GetOAuth2PermissionGrants = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -5269,14 +5274,14 @@ var AADGraph = (function() {
     /**
      * Delete an oAuth2PermissionGrant.  These permissions are typically granted when an application asked for a specific permission to a resource that the user has discretion over.
      * @method
-     * @name AADGraph#DeleteOAuth2PermissionGrant
+     * @name graph#DeleteOAuth2PermissionGrant
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} oAuth2PermissionGrantId - The unique identifier of an oAuth2PermissionGrant in Azure Active Directory
      * 
      */
-    AADGraph.prototype.DeleteOAuth2PermissionGrant = function(parameters) {
+    graph.prototype.DeleteOAuth2PermissionGrant = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -5372,7 +5377,7 @@ var AADGraph = (function() {
     /**
      * Get a list of all groups within the directory.
      * @method
-     * @name AADGraph#GetGroups
+     * @name graph#GetGroups
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -5382,7 +5387,7 @@ var AADGraph = (function() {
      * @param {string} $orderby - The oData v3.0 orderby statement.  Controls the order in which the results are returned.
      * 
      */
-    AADGraph.prototype.GetGroups = function(parameters) {
+    graph.prototype.GetGroups = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -5487,14 +5492,14 @@ var AADGraph = (function() {
     /**
      * Create a new group in Azure Active Directory.
      * @method
-     * @name AADGraph#CreateGroup
+     * @name graph#CreateGroup
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {} group - New group
      * 
      */
-    AADGraph.prototype.CreateGroup = function(parameters) {
+    graph.prototype.CreateGroup = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -5592,14 +5597,14 @@ var AADGraph = (function() {
     /**
      * Get a group by objectId from Azure Active Directory
      * @method
-     * @name AADGraph#GetGroup
+     * @name graph#GetGroup
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} groupId - The unique identifier of a group in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.GetGroup = function(parameters) {
+    graph.prototype.GetGroup = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -5695,14 +5700,14 @@ var AADGraph = (function() {
     /**
      * Delete a group by objectId.
      * @method
-     * @name AADGraph#DeleteGroup
+     * @name graph#DeleteGroup
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} groupId - The unique identifier of a group in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.DeleteGroup = function(parameters) {
+    graph.prototype.DeleteGroup = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -5798,7 +5803,7 @@ var AADGraph = (function() {
     /**
      * Updates a group (group object) identified by objectId in Azure Active Directory
      * @method
-     * @name AADGraph#UpdateGroup
+     * @name graph#UpdateGroup
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -5806,7 +5811,7 @@ var AADGraph = (function() {
      * @param {} group - group with updated fields
      * 
      */
-    AADGraph.prototype.UpdateGroup = function(parameters) {
+    graph.prototype.UpdateGroup = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -5911,7 +5916,7 @@ var AADGraph = (function() {
     /**
      * Get the owners of a group.
      * @method
-     * @name AADGraph#GetGroupOwners
+     * @name graph#GetGroupOwners
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -5919,7 +5924,7 @@ var AADGraph = (function() {
      * @param {string} groupId - The unique identifier of a group in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.GetGroupOwners = function(parameters) {
+    graph.prototype.GetGroupOwners = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -6019,7 +6024,7 @@ var AADGraph = (function() {
     /**
      * Add an owner to a group.
      * @method
-     * @name AADGraph#AddGroupOwner
+     * @name graph#AddGroupOwner
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -6027,7 +6032,7 @@ var AADGraph = (function() {
      * @param {} link - a link to a specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.AddGroupOwner = function(parameters) {
+    graph.prototype.AddGroupOwner = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -6132,7 +6137,7 @@ var AADGraph = (function() {
     /**
      * Removes an owner from a group.
      * @method
-     * @name AADGraph#RemoveGroupOwner
+     * @name graph#RemoveGroupOwner
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -6140,7 +6145,7 @@ var AADGraph = (function() {
      * @param {string} objectId - The unique identifier of the object specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.RemoveGroupOwner = function(parameters) {
+    graph.prototype.RemoveGroupOwner = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -6243,7 +6248,7 @@ var AADGraph = (function() {
     /**
      * Get group application role assignments.
      * @method
-     * @name AADGraph#GetGroupAppRoleAssignments
+     * @name graph#GetGroupAppRoleAssignments
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -6251,7 +6256,7 @@ var AADGraph = (function() {
      * @param {string} groupId - The unique identifier of a group in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.GetGroupAppRoleAssignments = function(parameters) {
+    graph.prototype.GetGroupAppRoleAssignments = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -6351,7 +6356,7 @@ var AADGraph = (function() {
     /**
      * Assign a groups of users to an application role.  If no roles exist use guid.empty (all 0000)
      * @method
-     * @name AADGraph#CreateGroupAppRoleAssignment
+     * @name graph#CreateGroupAppRoleAssignment
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -6359,7 +6364,7 @@ var AADGraph = (function() {
      * @param {} appRoleAssignment - New app role assignment
      * 
      */
-    AADGraph.prototype.CreateGroupAppRoleAssignment = function(parameters) {
+    graph.prototype.CreateGroupAppRoleAssignment = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -6464,7 +6469,7 @@ var AADGraph = (function() {
     /**
      * Delete a group application role assignment.
      * @method
-     * @name AADGraph#DeleteGroupAppRoleAssignment
+     * @name graph#DeleteGroupAppRoleAssignment
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -6472,7 +6477,7 @@ var AADGraph = (function() {
      * @param {string} objectId - The unique identifier of the object specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.DeleteGroupAppRoleAssignment = function(parameters) {
+    graph.prototype.DeleteGroupAppRoleAssignment = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -6575,14 +6580,14 @@ var AADGraph = (function() {
     /**
      * Get group extension properties
      * @method
-     * @name AADGraph#GetGroupExtensionProperties
+     * @name graph#GetGroupExtensionProperties
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} groupId - The unique identifier of a group in Azure Active Directory (ObjectId)
      * 
      */
-    AADGraph.prototype.GetGroupExtensionProperties = function(parameters) {
+    graph.prototype.GetGroupExtensionProperties = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -6678,7 +6683,7 @@ var AADGraph = (function() {
     /**
      * From a list of groups Ids select those that the group is a member of.
      * @method
-     * @name AADGraph#SelectAzureADGroupIdsGroupIsMemberOf
+     * @name graph#SelectAzureADGroupIdsGroupIsMemberOf
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -6686,7 +6691,7 @@ var AADGraph = (function() {
      * @param {} checkMemberGroupsParam - A list of groups object ids.
      * 
      */
-    AADGraph.prototype.SelectAzureADGroupIdsGroupIsMemberOf = function(parameters) {
+    graph.prototype.SelectAzureADGroupIdsGroupIsMemberOf = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -6791,7 +6796,7 @@ var AADGraph = (function() {
     /**
      * Get a list of all applications within the directory.
      * @method
-     * @name AADGraph#GetApplications
+     * @name graph#GetApplications
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -6801,7 +6806,7 @@ var AADGraph = (function() {
      * @param {string} $orderby - The oData v3.0 orderby statement.  Controls the order in which the results are returned.
      * 
      */
-    AADGraph.prototype.GetApplications = function(parameters) {
+    graph.prototype.GetApplications = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -6906,14 +6911,14 @@ var AADGraph = (function() {
     /**
      * Create a new application in Azure Active Directory.
      * @method
-     * @name AADGraph#CreateApplication
+     * @name graph#CreateApplication
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {} application - New application
      * 
      */
-    AADGraph.prototype.CreateApplication = function(parameters) {
+    graph.prototype.CreateApplication = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -7011,14 +7016,14 @@ var AADGraph = (function() {
     /**
      * Get an application by objectId from Azure Active Directory
      * @method
-     * @name AADGraph#GetApplication
+     * @name graph#GetApplication
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} appObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.GetApplication = function(parameters) {
+    graph.prototype.GetApplication = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -7114,14 +7119,14 @@ var AADGraph = (function() {
     /**
      * Delete an application by objectId.
      * @method
-     * @name AADGraph#DeleteApplication
+     * @name graph#DeleteApplication
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} appObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.DeleteApplication = function(parameters) {
+    graph.prototype.DeleteApplication = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -7217,7 +7222,7 @@ var AADGraph = (function() {
     /**
      * Updates an application (application object) identified by objectId in Azure Active Directory
      * @method
-     * @name AADGraph#UpdateApplication
+     * @name graph#UpdateApplication
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -7225,7 +7230,7 @@ var AADGraph = (function() {
      * @param {} application - application with updated fields
      * 
      */
-    AADGraph.prototype.UpdateApplication = function(parameters) {
+    graph.prototype.UpdateApplication = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -7330,14 +7335,14 @@ var AADGraph = (function() {
     /**
      * Get group extension properties
      * @method
-     * @name AADGraph#GetApplicationExtensionProperties
+     * @name graph#GetApplicationExtensionProperties
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} appObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.GetApplicationExtensionProperties = function(parameters) {
+    graph.prototype.GetApplicationExtensionProperties = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -7433,7 +7438,7 @@ var AADGraph = (function() {
     /**
      * Get application extension property
      * @method
-     * @name AADGraph#CreateApplicationExtensionProperty
+     * @name graph#CreateApplicationExtensionProperty
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -7441,7 +7446,7 @@ var AADGraph = (function() {
      * @param {} extensionProperty - New extension property
      * 
      */
-    AADGraph.prototype.CreateApplicationExtensionProperty = function(parameters) {
+    graph.prototype.CreateApplicationExtensionProperty = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -7546,7 +7551,7 @@ var AADGraph = (function() {
     /**
      * Delete an application extension property.
      * @method
-     * @name AADGraph#DeleteApplicationExtensionProperty
+     * @name graph#DeleteApplicationExtensionProperty
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -7554,7 +7559,7 @@ var AADGraph = (function() {
      * @param {string} objectId - The unique identifier of the object specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.DeleteApplicationExtensionProperty = function(parameters) {
+    graph.prototype.DeleteApplicationExtensionProperty = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -7657,7 +7662,7 @@ var AADGraph = (function() {
     /**
      * Get the owners of an application.
      * @method
-     * @name AADGraph#GetApplicationOwners
+     * @name graph#GetApplicationOwners
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -7665,7 +7670,7 @@ var AADGraph = (function() {
      * @param {string} appObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.GetApplicationOwners = function(parameters) {
+    graph.prototype.GetApplicationOwners = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -7765,7 +7770,7 @@ var AADGraph = (function() {
     /**
      * Add an owner to an application.
      * @method
-     * @name AADGraph#AddApplicationOwner
+     * @name graph#AddApplicationOwner
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -7773,7 +7778,7 @@ var AADGraph = (function() {
      * @param {} link - a link to a specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.AddApplicationOwner = function(parameters) {
+    graph.prototype.AddApplicationOwner = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -7878,7 +7883,7 @@ var AADGraph = (function() {
     /**
      * Removes an owner from an application.
      * @method
-     * @name AADGraph#RemoveApplicationOwner
+     * @name graph#RemoveApplicationOwner
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -7886,7 +7891,7 @@ var AADGraph = (function() {
      * @param {string} objectId - The unique identifier of the object specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.RemoveApplicationOwner = function(parameters) {
+    graph.prototype.RemoveApplicationOwner = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -7989,7 +7994,7 @@ var AADGraph = (function() {
     /**
      * Get a list of all applications within the directory.
      * @method
-     * @name AADGraph#GetServicePrincipals
+     * @name graph#GetServicePrincipals
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -7999,7 +8004,7 @@ var AADGraph = (function() {
      * @param {string} $orderby - The oData v3.0 orderby statement.  Controls the order in which the results are returned.
      * 
      */
-    AADGraph.prototype.GetServicePrincipals = function(parameters) {
+    graph.prototype.GetServicePrincipals = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -8104,14 +8109,14 @@ var AADGraph = (function() {
     /**
      * Create a new application in Azure Active Directory.
      * @method
-     * @name AADGraph#CreateServicePrincipal
+     * @name graph#CreateServicePrincipal
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {} group - New service principal
      * 
      */
-    AADGraph.prototype.CreateServicePrincipal = function(parameters) {
+    graph.prototype.CreateServicePrincipal = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -8209,14 +8214,14 @@ var AADGraph = (function() {
     /**
      * Get a service principal by objectId from Azure Active Directory
      * @method
-     * @name AADGraph#GetServicePrincipal
+     * @name graph#GetServicePrincipal
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} spObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.GetServicePrincipal = function(parameters) {
+    graph.prototype.GetServicePrincipal = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -8312,14 +8317,14 @@ var AADGraph = (function() {
     /**
      * Delete an application by objectId.
      * @method
-     * @name AADGraph#DeleteServicePrincipal
+     * @name graph#DeleteServicePrincipal
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} spObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.DeleteServicePrincipal = function(parameters) {
+    graph.prototype.DeleteServicePrincipal = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -8415,7 +8420,7 @@ var AADGraph = (function() {
     /**
      * Updates a service principal (service principal object) identified by objectId in Azure Active Directory
      * @method
-     * @name AADGraph#UpdateServicePrincipal
+     * @name graph#UpdateServicePrincipal
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -8423,7 +8428,7 @@ var AADGraph = (function() {
      * @param {} group - service principal with updated fields
      * 
      */
-    AADGraph.prototype.UpdateServicePrincipal = function(parameters) {
+    graph.prototype.UpdateServicePrincipal = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -8528,14 +8533,14 @@ var AADGraph = (function() {
     /**
      * Get service principal extension properties
      * @method
-     * @name AADGraph#GetServicePrincipalExtensionProperties
+     * @name graph#GetServicePrincipalExtensionProperties
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
      * @param {string} spObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.GetServicePrincipalExtensionProperties = function(parameters) {
+    graph.prototype.GetServicePrincipalExtensionProperties = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -8631,7 +8636,7 @@ var AADGraph = (function() {
     /**
      * Get the owners of a service principal.
      * @method
-     * @name AADGraph#GetServicePrincipalOwners
+     * @name graph#GetServicePrincipalOwners
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -8639,7 +8644,7 @@ var AADGraph = (function() {
      * @param {string} spObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.GetServicePrincipalOwners = function(parameters) {
+    graph.prototype.GetServicePrincipalOwners = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -8739,7 +8744,7 @@ var AADGraph = (function() {
     /**
      * Add an owner to a service principal.
      * @method
-     * @name AADGraph#AddServicePrincipalOwner
+     * @name graph#AddServicePrincipalOwner
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -8747,7 +8752,7 @@ var AADGraph = (function() {
      * @param {} link - a link to a specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.AddServicePrincipalOwner = function(parameters) {
+    graph.prototype.AddServicePrincipalOwner = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -8852,7 +8857,7 @@ var AADGraph = (function() {
     /**
      * Removes an owner from a service principal.
      * @method
-     * @name AADGraph#RemoveServicePrincipalOwner
+     * @name graph#RemoveServicePrincipalOwner
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -8860,7 +8865,7 @@ var AADGraph = (function() {
      * @param {string} objectId - The unique identifier of the object specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.RemoveServicePrincipalOwner = function(parameters) {
+    graph.prototype.RemoveServicePrincipalOwner = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -8963,7 +8968,7 @@ var AADGraph = (function() {
     /**
      * Get a list of groups and directory roles that the service principal is a member of.
      * @method
-     * @name AADGraph#GetServicePrincipalMemberships
+     * @name graph#GetServicePrincipalMemberships
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -8971,7 +8976,7 @@ var AADGraph = (function() {
      * @param {string} spObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.GetServicePrincipalMemberships = function(parameters) {
+    graph.prototype.GetServicePrincipalMemberships = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -9071,7 +9076,7 @@ var AADGraph = (function() {
     /**
      * Get the list of the oAuth2PermissionGrants that the user granted this service principal.  These permissions are typically granted when an application asked for a specific permission to a resource that the user has discretion over.
      * @method
-     * @name AADGraph#GetServicePrincipalOAuth2PermissionGrants
+     * @name graph#GetServicePrincipalOAuth2PermissionGrants
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -9079,7 +9084,7 @@ var AADGraph = (function() {
      * @param {string} spObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.GetServicePrincipalOAuth2PermissionGrants = function(parameters) {
+    graph.prototype.GetServicePrincipalOAuth2PermissionGrants = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -9179,7 +9184,7 @@ var AADGraph = (function() {
     /**
      * Get objects created by the service principal.
      * @method
-     * @name AADGraph#GetServicePrincipalCreatedObjects
+     * @name graph#GetServicePrincipalCreatedObjects
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -9187,7 +9192,7 @@ var AADGraph = (function() {
      * @param {string} spObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.GetServicePrincipalCreatedObjects = function(parameters) {
+    graph.prototype.GetServicePrincipalCreatedObjects = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -9287,7 +9292,7 @@ var AADGraph = (function() {
     /**
      * Get objects owned by the service principal.
      * @method
-     * @name AADGraph#GetServicePrincipalOwnedObjects
+     * @name graph#GetServicePrincipalOwnedObjects
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -9295,7 +9300,7 @@ var AADGraph = (function() {
      * @param {string} spObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.GetServicePrincipalOwnedObjects = function(parameters) {
+    graph.prototype.GetServicePrincipalOwnedObjects = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -9395,7 +9400,7 @@ var AADGraph = (function() {
     /**
      * Get user application role assignments.  Yes service principals can be assigned to application roles.
      * @method
-     * @name AADGraph#GetServicePrincipalAppRoleAssignments
+     * @name graph#GetServicePrincipalAppRoleAssignments
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -9403,7 +9408,7 @@ var AADGraph = (function() {
      * @param {string} spObjectId - THe unique idenfier of an application in Azure Active Directory
      * 
      */
-    AADGraph.prototype.GetServicePrincipalAppRoleAssignments = function(parameters) {
+    graph.prototype.GetServicePrincipalAppRoleAssignments = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -9503,7 +9508,7 @@ var AADGraph = (function() {
     /**
      * Assign a service principal to an application role.  If no roles exist use guid.empty (all 0000)
      * @method
-     * @name AADGraph#CreateServicePrincipalAppRoleAssignment
+     * @name graph#CreateServicePrincipalAppRoleAssignment
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -9511,7 +9516,7 @@ var AADGraph = (function() {
      * @param {} appRoleAssignment - New app role assignment
      * 
      */
-    AADGraph.prototype.CreateServicePrincipalAppRoleAssignment = function(parameters) {
+    graph.prototype.CreateServicePrincipalAppRoleAssignment = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -9616,7 +9621,7 @@ var AADGraph = (function() {
     /**
      * Delete a service principal application role assignment.
      * @method
-     * @name AADGraph#DeleteServicePrincipalAppRoleAssignment
+     * @name graph#DeleteServicePrincipalAppRoleAssignment
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -9624,7 +9629,7 @@ var AADGraph = (function() {
      * @param {string} objectId - The unique identifier of the object specific Azure Active Directory object
      * 
      */
-    AADGraph.prototype.DeleteServicePrincipalAppRoleAssignment = function(parameters) {
+    graph.prototype.DeleteServicePrincipalAppRoleAssignment = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -9727,7 +9732,7 @@ var AADGraph = (function() {
     /**
      * From a list of groups Ids select those that the service principal is a member of.
      * @method
-     * @name AADGraph#SelectAzureADGroupIdsServicePrincipalIsMemberOf
+     * @name graph#SelectAzureADGroupIdsServicePrincipalIsMemberOf
      * @param {string} tenantId - The ID of the tenant of instance of Azure Active Directory
      * @param {string} Authorization - Contains the bearer token used to authorize access to the API.
      * @param {string} apiVersion - Specifies the version of the API that you would like to use.
@@ -9735,7 +9740,7 @@ var AADGraph = (function() {
      * @param {} checkMemberGroupsParam - A list of groups object ids.
      * 
      */
-    AADGraph.prototype.SelectAzureADGroupIdsServicePrincipalIsMemberOf = function(parameters) {
+    graph.prototype.SelectAzureADGroupIdsServicePrincipalIsMemberOf = function(parameters) {
         if (parameters === undefined) {
             parameters = {};
         }
@@ -9838,7 +9843,7 @@ var AADGraph = (function() {
         return deferred.promise;
     };
 
-    return AADGraph;
+    return graph;
 })();
 
-exports.AADGraph = AADGraph;
+exports.graph = graph;

@@ -649,6 +649,9 @@
                         "$ref": "#/parameters/skipTokenParam"
                     },
                     {
+                        "$ref": "#/parameters/filterParam"
+                    },
+                    {
                         "$ref": "#/parameters/userIdParam"
                     }
                 ],
