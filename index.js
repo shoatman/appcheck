@@ -392,9 +392,9 @@ function checkPermissions(grant){
 
     //console.log(grant);
     if(grant.scope.indexOf(element.value) != -1){
-      console.log(role + " granted: " + element.value + " type: " + element.type + "consentable permission");
+      console.log((role + " granted: " + element.value + " type: " + element.type + "consentable permission").green);
     }else{
-      console.log(role + " did not grant: " + element.value + " type: " + element.type + "consentable permission");
+      console.log((role + " did not grant: " + element.value + " type: " + element.type + "consentable permission").red);
     }
   }
 }
@@ -500,8 +500,6 @@ program
             }else{
               userIsAdmin = false;
             }
-          }else{
-            console.log(arg2.reason);
           }
 
 
@@ -570,7 +568,11 @@ program
                   adminPermissions.forEach(checkPermissions(adminGrant[0]));
                   userPermissions.forEach(checkPermissions(adminGrant[0]));
                 }else{
-                  console.log('No admin permissions granted for app: ' + rApp.displayName + ": ID: " + rApp.appId);
+                  console.log(('No admin permissions granted for app: ' + rApp.displayName + ": ID: " + rApp.appId).red);
+                  console.log('The following admin only consent permissions are requested by the app:'.green);
+                  adminPermissions.forEach(function(element){
+                    console.log("Requested: " + element.value + " type: " + element.type + " consentable permission");
+                  })
                 }
 
 
@@ -582,7 +584,11 @@ program
                 if(userGrant[0]){
                   userPermissions.forEach(checkPermissions(userGrant[0]));
                 }else{
-                  console.log('No user permissions granted for app: ' + rApp.displayName + ": ID: " + rApp.appId);
+                  console.log(('No user permissions granted for app: ' + rApp.displayName + ": ID: " + rApp.appId).red);
+                  console.log('The following user consent permissions are requested by the app:'.green);
+                  userPermissions.forEach(function(element){
+                    console.log("Requested: " + element.value + " type: " + element.type + " consentable permission");
+                  })
                 }
               }
             };
