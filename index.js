@@ -368,6 +368,37 @@ function filterIsGlobalAdmin(value){
   return value.displayName === "Company Administrator";
 }
 
+function filterIsAdminOAuth2Permission(value){
+  return value.type === "Admin";
+}
+
+function filterIsUserOAuth2Permission(value){
+  return value.type === "User";
+}
+
+function filterIsAppGrant(appId){
+  return function(value){
+    return value.resourceId === appId;
+  }
+}
+
+function checkPermissions(grant){
+  return function logArrayElements(element, index, array) {
+    var role = "User";
+    
+    if(grant.consentType === "AllPrincipals"){
+      role = "Admin";
+    }
+
+    //console.log(grant);
+    if(grant.scope.indexOf(element.value) != -1){
+      console.log(role + " granted: " + element.value + " type: " + element.type + "consentable permission");
+    }else{
+      console.log(role + " did not grant: " + element.value + " type: " + element.type + "consentable permission");
+    }
+  }
+}
+
 program
   .command('healthcheck')
   .description('Get an overview of the app and your consent information relative to the app.')
@@ -490,28 +521,77 @@ program
             console.log('Nope, you are not an admin');
           }
 
-          for (var i = 2; i < arguments.length; i++) {
-            var rApp = arguments[i].value.body.value[0];
-            console.log(rApp.displayName);
-            resourceApps.push(rApp);
+          console.log('Here are the apps that your app said that it required access to:'.green);
+          for (var n = resourceAppIndex; n < arguments.length; n++) {
+            if(arguments[i].state === "fulfilled"){
+              var rApp = arguments[n].value.body.value[0];
+              console.log(rApp.displayName);
+              resourceApps.push(rApp);
+            }
           };
 
 
 
         }).then(function(){
 
+
+          var userGrants = null;
+          var adminGrants = null;
+
           if(grants){
 
 
-            var userGrants = grants.filter(filterIsUser(userObject.objectId));
+            userGrants = grants.filter(filterIsUser(userObject.objectId));
             console.log('Here are the oAuth2Permissions you granted this app'.green);
             console.log(cliff.inspect(userGrants));
 
-            var adminGrants = grants.filter(filterIsAdminConsented);
+            adminGrants = grants.filter(filterIsAdminConsented);
             console.log('Here are the oAuth2Permissions you or another admin consented to onbehalf of all users'.green);
             console.log(cliff.inspect(adminGrants));
           }
 
+          if(resourceApps.length > 0){
+
+            var adminPermissions;
+            var userPermissions;
+            //Missing admin grants...
+
+            console.log('Checking that permissions requested have been granted'.green);
+            for (var x = 0; x < resourceApps.length; x++) {
+              var rApp = resourceApps[x];
+              console.log(rApp.displayName);
+              adminPermissions = rApp.oauth2Permissions.filter(filterIsAdminOAuth2Permission);
+              userPermissions = rApp.oauth2Permissions.filter(filterIsUserOAuth2Permission);
+
+              if(adminGrants){
+                var adminGrant = adminGrants.filter(filterIsAppGrant(rApp.objectId));
+
+                if(adminGrant[0]){
+                  adminPermissions.forEach(checkPermissions(adminGrant[0]));
+                  userPermissions.forEach(checkPermissions(adminGrant[0]));
+                }else{
+                  console.log('No admin permissions granted for app: ' + rApp.displayName + ": ID: " + rApp.appId);
+                }
+
+
+              }
+
+              if(userGrants){
+                var userGrant = userGrants.filter(filterIsAppGrant(rApp.objectId));
+
+                if(userGrant[0]){
+                  userPermissions.forEach(checkPermissions(userGrant[0]));
+                }else{
+                  console.log('No user permissions granted for app: ' + rApp.displayName + ": ID: " + rApp.appId);
+                }
+              }
+            };
+
+
+          }
+
+        }).catch(function(err){
+          console.log(err);
         });
         
 
